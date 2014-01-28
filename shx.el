@@ -86,46 +86,30 @@
 (require 's)
 (require 'dash)
 
-
-(defun shx--compile-pred (sexp)
-  "Compile SEXP as a predicate."
-  (cond
-
-   ((integerp sexp)
-    (number-to-string sexp))
-
-   ((listp sexp)
-    (cl-case (car sexp)
-
-      ((equal)
-       (cl-assert (equal 3 (length sexp)) ()
-                  "Syntax error: equal predicate requires 2 arguments\n\n  %s"
-                  sexp)
-       (format "[ -eq %s %s ]"
-               (shx--compile (elt sexp 1))
-               (shx--compile (elt sexp 2))))
-
-      ((not)
-       (cl-assert (equal 2 (length sexp)) ()
-                  "Syntax error: not predicate requires 1 argument\n\n  %s"
-                  sexp)
-       (format "[ ! %s ]" (shx--compile (elt sexp 1))))
-
-      (t
-       (error "Syntax error: invalid predicate\n\n  %s" sexp))))
-   (t
-    (error "Syntax error: invalid predicate\n\n  %s" sexp))))
-
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
   (cl-case (car sexp)
+
+    ((equal)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: equal predicate requires 2 arguments\n\n  %s"
+                sexp)
+     (format "[ -eq %s %s ]"
+             (shx--compile (elt sexp 1))
+             (shx--compile (elt sexp 2))))
+
+    ((not)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: not predicate requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ ! %s ]" (shx--compile (elt sexp 1))))
 
     ((if)
      (cl-assert (equal 4 (length sexp)) ()
                 "Syntax error: if statement requires 3 arguments:\n\n  %s"
                 sexp)
-     (format "if %s; then %s else %s fi"
-             (shx--compile-pred (elt sexp 1))
+     (format "if %s; then %s; else %s; fi"
+             (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))
              (shx--compile (elt sexp 3))))
 
@@ -133,8 +117,8 @@
      (cl-assert (< 2 (length sexp)) ()
                 "Syntax error: when statement requires 2 or more arguments\n\n  %s"
                 sexp)
-     (format "if %s; then %s fi"
-             (shx--compile-pred (elt sexp 1))
+     (format "if %s; then %s; fi"
+             (shx--compile (elt sexp 1))
              (->> sexp
                (-drop 2)
                (-map 'shx--compile)
@@ -144,8 +128,8 @@
      (cl-assert (< 2 (length sexp)) ()
                 "Syntax error: unless statement requires 2 or more arguments\n\n  %s"
                 sexp)
-     (format "if %s; then; else %s fi"
-             (shx--compile-pred (elt sexp 1))
+     (format "if %s; then; else %s; fi"
+             (shx--compile (elt sexp 1))
              (->> sexp
                (-drop 2)
                (-map 'shx--compile)

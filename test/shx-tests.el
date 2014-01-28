@@ -33,7 +33,7 @@
 ;; if
 
 (ert-deftest compiles-if-to-if-then-else ()
-  (should (equal "if 0; then 1 else 2 fi"
+  (should (equal "if 0; then 1; else 2; fi"
                  (shx--compile '(if 0 1 2)))))
 
 (ert-deftest error-if-not-enough-args-to-if ()
@@ -44,7 +44,7 @@
 ;; when
 
 (ert-deftest compiles-when-to-if-then ()
-  (should (equal "if 0; then 1 fi"
+  (should (equal "if 0; then 1; fi"
                  (shx--compile '(when 0 1)))))
 
 (ert-deftest error-if-not-enough-args-to-when ()
@@ -52,13 +52,13 @@
   (should-error (shx--compile '(when 0))))
 
 (ert-deftest compiles-when-to-if-then-else--multiple-body-stmts ()
-  (should (equal "if 0; then 1; 2; 3 fi"
+  (should (equal "if 0; then 1; 2; 3; fi"
                  (shx--compile '(when 0 1 2 3)))))
 
 ;; unless
 
 (ert-deftest compiles-unless-to-if-then-else ()
-  (should (equal "if 0; then; else 1 fi"
+  (should (equal "if 0; then; else 1; fi"
                  (shx--compile '(unless 0 1)))))
 
 (ert-deftest error-if-not-enough-args-to-unless ()
@@ -66,7 +66,7 @@
   (should-error (shx--compile '(unless 0))))
 
 (ert-deftest compiles-unless-to-if-then-else--multiple-body-stmts ()
-  (should (equal "if 0; then; else 1; 2; 3 fi"
+  (should (equal "if 0; then; else 1; 2; 3; fi"
                  (shx--compile '(unless 0 1 2 3)))))
 
 ;; progn
@@ -108,19 +108,16 @@
   (should-error (shx--compile '(and)))
   (should-error (shx--compile '(and 0))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Predicates
-
 ;; equal
 
 (ert-deftest compiles-equality-predicate ()
-  (should (equal "if [ -eq 0 1 ]; then 2 fi"
-                 (shx--compile '(when (equal 0 1) 2)))))
+  (should (equal "[ -eq 0 1 ]"
+                 (shx--compile '(equal 0 1)))))
 
 (ert-deftest error-if-not-2-args-to-equal ()
-  (should-error (shx--compile-pred '(equal)))
-  (should-error (shx--compile-pred '(equal 0)))
-  (should-error (shx--compile-pred '(equal 0 1 2))))
+  (should-error (shx--compile '(equal)))
+  (should-error (shx--compile '(equal 0)))
+  (should-error (shx--compile '(equal 0 1 2))))
 
 ;; not
 
