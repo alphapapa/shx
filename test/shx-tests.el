@@ -38,9 +38,17 @@
   (should (equal "if 0; then 1 fi"
                  (shx--compile '(when 0 1)))))
 
+(ert-deftest compiles-when-to-if-then-else--multiple-body-stmts ()
+  (should (equal "if 0; then 1; 2; 3 fi"
+                 (shx--compile '(when 0 1 2 3)))))
+
 (ert-deftest compiles-unless-to-if-then-else ()
   (should (equal "if 0; then; else 1 fi"
                  (shx--compile '(unless 0 1)))))
+
+(ert-deftest compiles-unless-to-if-then-else--multiple-body-stmts ()
+  (should (equal "if 0; then; else 1; 2; 3 fi"
+                 (shx--compile '(unless 0 1 2 3)))))
 
 (ert-deftest compiles-progn-as-semicolon-delimited-statements ()
   (should (equal "0; 1; 2;"

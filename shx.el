@@ -110,7 +110,10 @@
                 sexp)
      (format "if %s; then %s fi"
              (shx--compile-pred (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+             (->> sexp
+               (-drop 2)
+               (-map 'shx--compile)
+               (s-join "; "))))
 
     ((unless)
      (cl-assert (<= 3 (length sexp)) ()
@@ -118,7 +121,10 @@
                 sexp)
      (format "if %s; then; else %s fi"
              (shx--compile-pred (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+             (->> sexp
+               (-drop 2)
+               (-map 'shx--compile)
+               (s-join "; "))))
 
     ((progn)
      (cl-assert (<= 1 (length sexp)) ()
