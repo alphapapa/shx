@@ -69,12 +69,6 @@
   (should (equal "if 0; then; else 1; 2; 3 fi"
                  (shx--compile '(unless 0 1 2 3)))))
 
-;; predicates
-
-(ert-deftest compiles-equality-predicate ()
-  (should (equal "if [ -eq 0 1 ]; then 2 fi"
-                 (shx--compile '(when (equal 0 1) 2)))))
-
 ;; progn
 
 (ert-deftest compiles-progn-as-semicolon-delimited-statements ()
@@ -94,6 +88,51 @@
   (should-error (shx--compile '(->>)))
   (should-error (shx--compile '(->> 0))))
 
+;; or
+
+(ert-deftest compiles-or-as-pipe-delimited-statements ()
+  (should (equal "0 || 1 || 2"
+                 (shx--compile '(or 0 1 2)))))
+
+(ert-deftest error-if-not-enough-args-to-or ()
+  (should-error (shx--compile '(or)))
+  (should-error (shx--compile '(or 0))))
+
+;; and
+
+(ert-deftest compiles-and-as-pipe-delimited-statements ()
+  (should (equal "0 && 1 && 2"
+                 (shx--compile '(and 0 1 2)))))
+
+(ert-deftest error-if-not-enough-args-to-and ()
+  (should-error (shx--compile '(and)))
+  (should-error (shx--compile '(and 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Predicates
+
+;; equal
+
+(ert-deftest compiles-equality-predicate ()
+  (should (equal "if [ -eq 0 1 ]; then 2 fi"
+                 (shx--compile '(when (equal 0 1) 2)))))
+
+(ert-deftest error-if-not-2-args-to-equal ()
+  (should-error (shx--compile-pred '(equal)))
+  (should-error (shx--compile-pred '(equal 0)))
+  (should-error (shx--compile-pred '(equal 0 1 2))))
+
+;; not
+
+(ert-deftest compiles-not-predicate ()
+  (should (equal "[ ! 0 ]"
+                 (shx--compile '(not 0)))))
+
+(ert-deftest error-if-not-1-arg-to-not ()
+  (should-error (shx--compile '(not)))
+  (should-error (shx--compile '(not 0 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; shx
 
 (ert-deftest shx-executes-synchronously ()

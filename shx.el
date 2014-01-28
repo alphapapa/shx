@@ -105,6 +105,12 @@
                (shx--compile (elt sexp 1))
                (shx--compile (elt sexp 2))))
 
+      ((not)
+       (cl-assert (equal 2 (length sexp)) ()
+                  "Syntax error: not predicate requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ ! %s ]" (shx--compile (elt sexp 1))))
+
       (t
        (error "Syntax error: invalid predicate\n\n  %s" sexp))))
    (t
@@ -154,6 +160,24 @@
        (-map 'shx--compile)
        (s-join "; ")
        (s-append ";")))
+
+    ((or)
+     (cl-assert (< 2 (length sexp)) ()
+                "Syntax error: or requires 2 or more arguments\n\n  %s"
+                sexp)
+     (->> sexp
+       (-drop 1)
+       (-map 'shx--compile)
+       (s-join " || ")))
+
+    ((and)
+     (cl-assert (< 2 (length sexp)) ()
+                "Syntax error: and requires 2 or more arguments\n\n  %s"
+                sexp)
+     (->> sexp
+       (-drop 1)
+       (-map 'shx--compile)
+       (s-join " && ")))
 
     ((->>)
      (cl-assert (< 2 (length sexp)) ()
