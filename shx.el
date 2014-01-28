@@ -125,6 +125,15 @@
        (-map 'shx--compile)
        (s-join "; ")
        (s-append ";")))
+    ((->>)
+     (cl-assert (<= 2 (length sexp)) ()
+                "Syntax error: ->> requires 2 or more arguments\n\n  %s"
+                sexp)
+     (->> sexp
+       (-drop 1)
+       (-map 'shx--compile)
+       (s-join " | ")))
+
     (t
      (error "Syntax error: Invalid expression\n\n  %s" sexp))))
 

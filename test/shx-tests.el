@@ -46,9 +46,9 @@
   (should (equal "0; 1; 2;"
                  (shx--compile '(progn 0 1 2)))))
 
-(ert-deftest compiles-empty-progn-to-empty-string ()
-  (should (equal ""
-                 (shx--compile '(progn)))))
+(ert-deftest compiles-thread-as-pipe-delimited-statements ()
+  (should (equal "0 | 1 | 2"
+                 (shx--compile '(->> 0 1 2)))))
 
 (ert-deftest shx-executes-synchronously ()
   (should (equal (shell-command-to-string "uname")
