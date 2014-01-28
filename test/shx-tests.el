@@ -56,6 +56,12 @@
   (should (equal "if 0; then; else 1; 2; 3 fi"
                  (shx--compile '(unless 0 1 2 3)))))
 
+;; predicates
+
+(ert-deftest compiles-equality-predicate ()
+  (should (equal "if [ -eq 0 1 ]; then 2 fi"
+                 (shx--compile '(when (equal 0 1) 2)))))
+
 ;; progn
 
 (ert-deftest compiles-progn-as-semicolon-delimited-statements ()

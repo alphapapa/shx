@@ -89,7 +89,26 @@
 
 (defun shx--compile-pred (sexp)
   "Compile SEXP as a predicate."
-  0)
+  (cond
+
+   ((integerp sexp)
+    (number-to-string sexp))
+
+   ((listp sexp)
+    (cl-case (car sexp)
+
+      ((equal)
+       (cl-assert (equal 3 (length sexp)) ()
+                  "Syntax error: equal predicate requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ -eq %s %s ]"
+               (shx--compile (elt sexp 1))
+               (shx--compile (elt sexp 2))))
+
+      (t
+       (error "Syntax error: invalid predicate\n\n  %s" sexp))))
+   (t
+    (error "Syntax error: invalid predicate\n\n  %s" sexp))))
 
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
