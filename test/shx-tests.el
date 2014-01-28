@@ -111,7 +111,7 @@
 ;; equal
 
 (ert-deftest compiles-equality-predicate ()
-  (should (equal "[ -eq 0 1 ]"
+  (should (equal "[ 0 = 1 ]"
                  (shx--compile '(equal 0 1)))))
 
 (ert-deftest error-if-not-2-args-to-equal ()

@@ -94,7 +94,7 @@
      (cl-assert (equal 3 (length sexp)) ()
                 "Syntax error: equal predicate requires 2 arguments\n\n  %s"
                 sexp)
-     (format "[ -eq %s %s ]"
+     (format "[ %s = %s ]"
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 
