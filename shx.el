@@ -133,8 +133,7 @@
   (cond
    ((vectorp sexp)
     (let ((cmd (elt sexp 0)))
-      (cl-assert (stringp cmd) t "Invalid raw command: %s")
-      (format "$(%s)" cmd)))
+      (format "$(%s)" (shx--compile cmd))))
    ((listp sexp)
     (shx--compile-list sexp))
    ((integerp sexp)
