@@ -30,9 +30,13 @@
 (ert-deftest compiles-square-bracketed-strings-to-subshells ()
   (should (equal "$(ls -la)" (shx--compile ["ls -la"]))))
 
+;; if
+
 (ert-deftest compiles-if-to-if-then-else ()
   (should (equal "if 0; then 1 else 2 fi"
                  (shx--compile '(if 0 1 2)))))
+
+;; when
 
 (ert-deftest compiles-when-to-if-then ()
   (should (equal "if 0; then 1 fi"
@@ -42,6 +46,8 @@
   (should (equal "if 0; then 1; 2; 3 fi"
                  (shx--compile '(when 0 1 2 3)))))
 
+;; unless
+
 (ert-deftest compiles-unless-to-if-then-else ()
   (should (equal "if 0; then; else 1 fi"
                  (shx--compile '(unless 0 1)))))
@@ -50,13 +56,19 @@
   (should (equal "if 0; then; else 1; 2; 3 fi"
                  (shx--compile '(unless 0 1 2 3)))))
 
+;; progn
+
 (ert-deftest compiles-progn-as-semicolon-delimited-statements ()
   (should (equal "0; 1; 2;"
                  (shx--compile '(progn 0 1 2)))))
 
+;; ->>
+
 (ert-deftest compiles-thread-as-pipe-delimited-statements ()
   (should (equal "0 | 1 | 2"
                  (shx--compile '(->> 0 1 2)))))
+
+;; shx
 
 (ert-deftest shx-executes-synchronously ()
   (should (equal (shell-command-to-string "uname")
@@ -67,6 +79,8 @@
 
 (ert-deftest shx-executes-synchronously--nil-on-failure ()
   (should (not (eval `(shx ,(int-to-string (random)))))))
+
+;; shx-string
 
 (ert-deftest shx-executes-synchronously-returning-string ()
   (should (equal (shell-command-to-string "uname")
