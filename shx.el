@@ -95,30 +95,38 @@
   "Compile SEXP as a list."
   (cl-case (car sexp)
     ((if)
-     (cl-assert (equal 4 (length sexp)) t "Malformed if statement: %s")
+     (cl-assert (equal 4 (length sexp)) ()
+                "Syntax error: if statement requires 3 arguments:\n\n  %s"
+                sexp)
      (format "if %s; then %s else %s fi"
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))
              (shx--compile (elt sexp 3))))
     ((when)
-     (cl-assert (equal 3 (length sexp)) t "Malformed when statement: %s")
+     (cl-assert (<= 3 (length sexp)) ()
+                "Syntax error: when statement requires 2 or more arguments\n\n  %s"
+                sexp)
      (format "if %s; then %s fi"
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))))
     ((unless)
-     (cl-assert (equal 3 (length sexp)) t "Malformed unless statement: %s")
+     (cl-assert (<= 3 (length sexp)) ()
+                "Syntax error: unless statement requires 2 or more arguments\n\n  %s"
+                sexp)
      (format "if %s; then; else %s fi"
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))))
     ((progn)
-     (-if-let (exprs (cdr sexp))
-         (->> exprs
-           (-map 'shx--compile)
-           (s-join "; ")
-           (s-append ";"))
-       ""))
+     (cl-assert (< 1 (length sexp)) ()
+                "Syntax error: progn requires 1 or more arguments\n\n  %s"
+                sexp)
+     (->> sexp
+       (-drop 1)
+       (-map 'shx--compile)
+       (s-join "; ")
+       (s-append ";")))
     (t
-     (error "Syntax error: Invalid expression: %s" sexp))))
+     (error "Syntax error: Invalid expression\n\n  %s" sexp))))
 
 (defun shx--compile (sexp)
   "Compile SEXP into a shell command string."
@@ -134,7 +142,7 @@
    ((stringp sexp)
     sexp)
    (t
-    (error "Syntax error: Invalid expression: %s" sexp))))
+    (error "Syntax error: Invalid expression\n\n  %s" sexp))))
 
 (defmacro shx (form)
   "Convert FORM to a shell command and execute synchronously.
