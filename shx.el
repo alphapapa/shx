@@ -110,7 +110,15 @@
      (format "if %s; then; else %s fi"
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))))
-    ))
+    ((progn)
+     (-if-let (exprs (cdr sexp))
+         (->> exprs
+           (-map 'shx--compile)
+           (s-join "; ")
+           (s-append ";"))
+       ""))
+    (t
+     (error "Syntax error: Invalid expression: %s" sexp))))
 
 (defun shx--compile (sexp)
   "Compile SEXP into a shell command string."
@@ -124,7 +132,9 @@
    ((integerp sexp)
     (number-to-string sexp))
    ((stringp sexp)
-    sexp)))
+    sexp)
+   (t
+    (error "Syntax error: Invalid expression: %s" sexp))))
 
 (defmacro shx (form)
   "Convert FORM to a shell command and execute synchronously.
