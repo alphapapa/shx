@@ -26,9 +26,9 @@
 
 ;;; Grammar:
 
-;; SUBSHELL = [STRING]
 ;; ATOM     = SUBSHELL | STRING | SYMBOL | INT | t
 ;; LIST     = ( ATOM* )
+;; SUBSHELL = [EXPR]
 ;; EXPR     = SUBSHELL | IF | WHEN | UNLESS | AND | OR | NOT | CASE
 ;;
 ;; PATH        = STRING
@@ -94,6 +94,7 @@
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
   (cl-case (car sexp)
+
     ((if)
      (cl-assert (equal 4 (length sexp)) ()
                 "Syntax error: if statement requires 3 arguments:\n\n  %s"
@@ -102,6 +103,7 @@
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))
              (shx--compile (elt sexp 3))))
+
     ((when)
      (cl-assert (<= 3 (length sexp)) ()
                 "Syntax error: when statement requires 2 or more arguments\n\n  %s"
@@ -109,6 +111,7 @@
      (format "if %s; then %s fi"
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))))
+
     ((unless)
      (cl-assert (<= 3 (length sexp)) ()
                 "Syntax error: unless statement requires 2 or more arguments\n\n  %s"
@@ -116,8 +119,9 @@
      (format "if %s; then; else %s fi"
              (shx--compile-pred (elt sexp 1))
              (shx--compile (elt sexp 2))))
+
     ((progn)
-     (cl-assert (< 1 (length sexp)) ()
+     (cl-assert (<= 1 (length sexp)) ()
                 "Syntax error: progn requires 1 or more arguments\n\n  %s"
                 sexp)
      (->> sexp
@@ -125,6 +129,7 @@
        (-map 'shx--compile)
        (s-join "; ")
        (s-append ";")))
+
     ((->>)
      (cl-assert (<= 2 (length sexp)) ()
                 "Syntax error: ->> requires 2 or more arguments\n\n  %s"
