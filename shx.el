@@ -124,7 +124,7 @@
              (shx--compile (elt sexp 3))))
 
     ((when)
-     (cl-assert (<= 3 (length sexp)) ()
+     (cl-assert (< 2 (length sexp)) ()
                 "Syntax error: when statement requires 2 or more arguments\n\n  %s"
                 sexp)
      (format "if %s; then %s fi"
@@ -135,7 +135,7 @@
                (s-join "; "))))
 
     ((unless)
-     (cl-assert (<= 3 (length sexp)) ()
+     (cl-assert (< 2 (length sexp)) ()
                 "Syntax error: unless statement requires 2 or more arguments\n\n  %s"
                 sexp)
      (format "if %s; then; else %s fi"
@@ -146,7 +146,7 @@
                (s-join "; "))))
 
     ((progn)
-     (cl-assert (<= 1 (length sexp)) ()
+     (cl-assert (< 1 (length sexp)) ()
                 "Syntax error: progn requires 1 or more arguments\n\n  %s"
                 sexp)
      (->> sexp
@@ -156,7 +156,7 @@
        (s-append ";")))
 
     ((->>)
-     (cl-assert (<= 2 (length sexp)) ()
+     (cl-assert (< 2 (length sexp)) ()
                 "Syntax error: ->> requires 2 or more arguments\n\n  %s"
                 sexp)
      (->> sexp

@@ -36,11 +36,20 @@
   (should (equal "if 0; then 1 else 2 fi"
                  (shx--compile '(if 0 1 2)))))
 
+(ert-deftest error-if-not-enough-args-to-if ()
+  (should-error (shx--compile '(if)))
+  (should-error (shx--compile '(if 0)))
+  (should-error (shx--compile '(if 0 1))))
+
 ;; when
 
 (ert-deftest compiles-when-to-if-then ()
   (should (equal "if 0; then 1 fi"
                  (shx--compile '(when 0 1)))))
+
+(ert-deftest error-if-not-enough-args-to-when ()
+  (should-error (shx--compile '(when)))
+  (should-error (shx--compile '(when 0))))
 
 (ert-deftest compiles-when-to-if-then-else--multiple-body-stmts ()
   (should (equal "if 0; then 1; 2; 3 fi"
@@ -51,6 +60,10 @@
 (ert-deftest compiles-unless-to-if-then-else ()
   (should (equal "if 0; then; else 1 fi"
                  (shx--compile '(unless 0 1)))))
+
+(ert-deftest error-if-not-enough-args-to-unless ()
+  (should-error (shx--compile '(unless)))
+  (should-error (shx--compile '(unless 0))))
 
 (ert-deftest compiles-unless-to-if-then-else--multiple-body-stmts ()
   (should (equal "if 0; then; else 1; 2; 3 fi"
@@ -68,11 +81,18 @@
   (should (equal "0; 1; 2;"
                  (shx--compile '(progn 0 1 2)))))
 
+(ert-deftest error-if-not-enough-args-to-progn ()
+  (should-error (shx--compile '(progn))))
+
 ;; ->>
 
 (ert-deftest compiles-thread-as-pipe-delimited-statements ()
   (should (equal "0 | 1 | 2"
                  (shx--compile '(->> 0 1 2)))))
+
+(ert-deftest error-if-not-enough-args-to-thread ()
+  (should-error (shx--compile '(->>)))
+  (should-error (shx--compile '(->> 0))))
 
 ;; shx
 
