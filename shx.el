@@ -256,6 +256,30 @@ Return the result as a string."
   (cl-assert (shx--compile form))
   `(shell-command-to-string (shx--compile ',form)))
 
+(defun shx-pp-to-string (sexp)
+  "Compile SEXP and pretty-print as a string."
+  (let ((s (->> (shx--compile sexp) (s-replace "; " ";\n"))))
+    (with-temp-buffer
+      (insert s)
+      (shell-script-mode)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (goto-char (line-beginning-position))
+        (indent-for-tab-command)
+        (forward-line))
+      (buffer-string))))
+
+(defun shx-pp (sexp)
+  "Compile SEXP and pretty-print to a new buffer."
+  (interactive "xExpression: ")
+  (let ((s (shx-compile-pp-to-string sexp))
+        (buf (get-buffer-create "*shx pp output*")))
+    (with-current-buffer buf
+      (shell-script-mode)
+      (erase-buffer)
+      (insert s)
+      (switch-to-buffer-other-window buf))))
+
 (provide 'shx)
 
 ;;; shx.el ends here
