@@ -323,6 +323,16 @@ reporting.  CLAUSE is a list of (test &rest body)."
                  (car args)
                  (shx--compile (elt args 1)))))
 
+      ((export!)
+       (cl-assert (-contains? '(1 2) (length args)) ()
+                  "Syntax error: export! requires 1 or 2 arguments\n\n  %s" sexp)
+       (let ((var (car args)))
+         (cl-assert (or (symbolp var) (stringp var)) ()
+                    "Syntax error: first argument to export! must be a string or symbol\n\n  %s"
+                    sexp)
+         (if (equal 2 (length args))
+             (format "export %s=%s" var (shx--compile (elt args 1)))
+           (format "export %s" var))))
 
       ((sub)
        (cl-assert (<= 1 (length args)) ()

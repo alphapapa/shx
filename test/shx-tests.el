@@ -370,6 +370,23 @@
   (should (equal "\"hello\"" (shx--compile '(dquote "hello"))))
   (should (equal "\"hello\"" (shx--compile '(%% "hello")))))
 
+;; export!
+
+(ert-deftest compiles-unary-export!-to-exported-var ()
+  (should (equal "export a" (shx--compile '(export! a)))))
+
+(ert-deftest compiles-binary-export!-to-exported-var-assignment ()
+  (should (equal "export a=2" (shx--compile '(export! a 2)))))
+
+(ert-deftest error-if-not-1-or-2-args-to-export! ()
+  (should-error (shx--compile '(export!)))
+  (should-error (shx--compile '(export! a 1 2))))
+
+(ert-deftest error-if-first-arg-to-export!-not-a-string-or-symbol ()
+  (should (shx--compile '(export! a 1)))
+  (should (shx--compile '(export! "a" 1)))
+  (should-error (shx--compile '(export! 0 1))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; shx
