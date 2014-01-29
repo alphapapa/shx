@@ -374,6 +374,12 @@
   (should (shx--compile '(export! "a" 1)))
   (should-error (shx--compile '(export! 0 1))))
 
+;; nested conditionals
+
+(ert-deftest removes-space-between-brackets-in-nested-conditionals ()
+  (should (equal "[[ 1 -eq 1 ] -eq [ 1 -eq 1 ]]"
+                 (shx--compile '(= [1 = 1] [1 = 1])))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; shx

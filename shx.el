@@ -97,6 +97,20 @@ reporting.  CLAUSE is a list of (test &rest body)."
 
               (format "if %s; then %s; %s fi;" test then elifs))))))))
 
+(defun shx--compile-op-lhs (args)
+  "Compile ARGS, adding left padding unless this is a test."
+  (let ((op (shx--compile (elt args 0))))
+    (if (s-starts-with? "[" op)
+        op
+      (concat " " op))))
+
+(defun shx--compile-op-rhs (args)
+  "Compile ARGS, adding right padding unless this is a test."
+  (let ((op (shx--compile (elt args 1))))
+    (if (s-ends-with? "]" op)
+        op
+      (concat op " "))))
+
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
   (cl-destructuring-bind (cmd &rest args) sexp
@@ -108,17 +122,17 @@ reporting.  CLAUSE is a list of (test &rest body)."
        (cl-assert (equal 2 (length args)) ()
                   "Syntax error: equal requires 2 arguments\n\n  %s"
                   sexp)
-       (format "[ %s -eq %s ]"
-               (shx--compile (elt args 0))
-               (shx--compile (elt args 1))))
+       (format "[%s -eq %s]"
+               (shx--compile-op-lhs args)
+               (shx--compile-op-rhs args)))
 
       ((!= /=)
        (cl-assert (equal 2 (length args)) ()
                   "Syntax error: /= requires 2 arguments\n\n  %s"
                   sexp)
-       (format "[ %s -ne %s ]"
-               (shx--compile (elt args 0))
-               (shx--compile (elt args 1))))
+       (format "[%s -ne %s]"
+               (shx--compile-op-lhs args)
+               (shx--compile-op-rhs args)))
 
       ;; Relations
 
@@ -126,51 +140,51 @@ reporting.  CLAUSE is a list of (test &rest body)."
        (cl-assert (equal 2 (length args)) ()
                   "Syntax error: < requires 2 arguments\n\n  %s"
                   sexp)
-       (format "[ %s -lt %s ]"
-               (shx--compile (elt args 0))
-               (shx--compile (elt args 1))))
+       (format "[%s -lt %s]"
+               (shx--compile-op-lhs args )
+               (shx--compile-op-rhs args)))
 
       ((<=)
        (cl-assert (equal 2 (length args)) ()
                   "Syntax error: <= requires 2 arguments\n\n  %s"
                   sexp)
-       (format "[ %s -le %s ]"
-               (shx--compile (elt args 0))
-               (shx--compile (elt args 1))))
+       (format "[%s -le %s]"
+               (shx--compile-op-lhs args)
+               (shx--compile-op-rhs args)))
 
       ((>)
        (cl-assert (equal 2 (length args)) ()
                   "Syntax error: > requires 2 arguments\n\n  %s"
                   sexp)
-       (format "[ %s -gt %s ]"
-               (shx--compile (elt args 0))
-               (shx--compile (elt args 1))))
+       (format "[%s -gt %s]"
+               (shx--compile-op-lhs args)
+               (shx--compile-op-rhs args)))
 
       ((>=)
        (cl-assert (equal 2 (length args)) ()
                   "Syntax error: >= requires 2 arguments\n\n  %s"
                   sexp)
-       (format "[ %s -ge %s ]"
-               (shx--compile (elt args 0))
-               (shx--compile (elt args 1))))
+       (format "[%s -ge %s]"
+               (shx--compile-op-lhs args)
+               (shx--compile-op-rhs args)))
 
       ((positive?)
        (cl-assert (equal 1 (length args)) ()
                   "Syntax error: positive? requires 1 argument\n\n  %s"
                   sexp)
-       (format "[ %s -gt 0 ]" (shx--compile (car args))))
+       (format "[%s -gt 0 ]" (shx--compile-op-lhs args)))
 
       ((zero?)
        (cl-assert (equal 1 (length args)) ()
                   "Syntax error: zero? requires 1 argument\n\n  %s"
                   sexp)
-       (format "[ %s -eq 0 ]" (shx--compile (car args))))
+       (format "[%s -eq 0 ]" (shx--compile-op-lhs args)))
 
       ((negative?)
        (cl-assert (equal 1 (length args)) ()
                   "Syntax error: negative? requires 1 argument\n\n  %s"
                   sexp)
-       (format "[ %s -lt 0 ]" (shx--compile (car args))))
+       (format "[%s -lt 0 ]" (shx--compile-op-lhs args)))
 
       ;; IO tests
 
