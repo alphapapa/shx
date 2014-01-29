@@ -133,237 +133,219 @@ reporting.  CLAUSE is a list of (test &rest body)."
 
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
-  (cl-case (car sexp)
+  (cl-destructuring-bind (cmd &rest args) sexp
+    (cl-case cmd
 
-    ;; Equality
+      ;; Equality
 
-    ((equal =)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: equal requires 2 arguments\n\n  %s"
-                sexp)
-     (format "[ %s -eq %s ]"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+      ((equal =)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: equal requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ %s -eq %s ]"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))))
 
-    ((!= /=)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: /= requires 2 arguments\n\n  %s"
-                sexp)
-     (format "[ %s -ne %s ]"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+      ((!= /=)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: /= requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ %s -ne %s ]"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))))
 
-    ;; Relations
+      ;; Relations
 
-    ((<)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: < requires 2 arguments\n\n  %s"
-                sexp)
-     (format "[ %s -lt %s ]"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+      ((<)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: < requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ %s -lt %s ]"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))))
 
-    ((<=)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: <= requires 2 arguments\n\n  %s"
-                sexp)
-     (format "[ %s -le %s ]"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+      ((<=)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: <= requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ %s -le %s ]"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))))
 
-    ((>)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: > requires 2 arguments\n\n  %s"
-                sexp)
-     (format "[ %s -gt %s ]"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+      ((>)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: > requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ %s -gt %s ]"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))))
 
-    ((>=)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: >= requires 2 arguments\n\n  %s"
-                sexp)
-     (format "[ %s -ge %s ]"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))))
+      ((>=)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: >= requires 2 arguments\n\n  %s"
+                  sexp)
+       (format "[ %s -ge %s ]"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))))
 
-    ((positive?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: positive? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ %s -gt 0 ]" (shx--compile (elt sexp 1))))
+      ((positive?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: positive? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ %s -gt 0 ]" (shx--compile (car args))))
 
-    ((zero?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: zero? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ %s -eq 0 ]" (shx--compile (elt sexp 1))))
+      ((zero?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: zero? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ %s -eq 0 ]" (shx--compile (car args))))
 
-    ((negative?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: negative? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ %s -lt 0 ]" (shx--compile (elt sexp 1))))
+      ((negative?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: negative? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ %s -lt 0 ]" (shx--compile (car args))))
 
-    ;; IO tests
+      ;; IO tests
 
-    ((dir-exists?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: dir-exists? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ -d %s ]" (shx--compile (elt sexp 1))))
+      ((dir-exists?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: dir-exists? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ -d %s ]" (shx--compile (car args))))
 
-    ((f-exists?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: f-exists? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ -f %s ]" (shx--compile (elt sexp 1))))
+      ((f-exists?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: f-exists? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ -f %s ]" (shx--compile (car args))))
 
-    ((f-nonempty?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: f-nonempty? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ -s %s ]" (shx--compile (elt sexp 1))))
+      ((f-nonempty?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: f-nonempty? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ -s %s ]" (shx--compile (car args))))
 
-    ((f-writable?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: f-writable? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ -w %s ]" (shx--compile (elt sexp 1))))
+      ((f-writable?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: f-writable? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ -w %s ]" (shx--compile (car args))))
 
-    ((f-readable?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: f-readable? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ -r %s ]" (shx--compile (elt sexp 1))))
+      ((f-readable?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: f-readable? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ -r %s ]" (shx--compile (car args))))
 
-    ((f-executable?)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: f-executable? requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ -x %s ]" (shx--compile (elt sexp 1))))
+      ((f-executable?)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: f-executable? requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ -x %s ]" (shx--compile (car args))))
 
-    ;; Logic
+      ;; Logic
 
-    ((or)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: or requires 2 or more arguments\n\n  %s"
-                sexp)
-     (->> sexp
-       (-drop 1)
-       (-map 'shx--compile)
-       (s-join " || ")))
+      ((or)
+       (cl-assert (<= 2 (length args)) ()
+                  "Syntax error: or requires 2 or more arguments\n\n  %s"
+                  sexp)
+       (s-join " || " (-map 'shx--compile args)))
 
-    ((and)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: and requires 2 or more arguments\n\n  %s"
-                sexp)
-     (->> sexp
-       (-drop 1)
-       (-map 'shx--compile)
-       (s-join " && ")))
+      ((and)
+       (cl-assert (<= 2 (length args)) ()
+                  "Syntax error: and requires 2 or more arguments\n\n  %s"
+                  sexp)
 
-    ((not)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: not predicate requires 1 argument\n\n  %s"
-                sexp)
-     (format "[ ! %s ]" (shx--compile (elt sexp 1))))
+       (s-join " && " (-map 'shx--compile args)))
 
-    ;; Control structures
+      ((not)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: not predicate requires 1 argument\n\n  %s"
+                  sexp)
+       (format "[ ! %s ]" (shx--compile (car args))))
 
-    ((if)
-     (cl-assert (equal 4 (length sexp)) ()
-                "Syntax error: if statement requires 3 arguments:\n\n  %s"
-                sexp)
-     (format "if %s; then %s; else %s; fi"
-             (shx--compile (elt sexp 1))
-             (shx--compile (elt sexp 2))
-             (shx--compile (elt sexp 3))))
+      ;; Control structures
 
-    ((when)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: when statement requires 2 or more arguments\n\n  %s"
-                sexp)
-     (format "if %s; then %s; fi"
-             (shx--compile (elt sexp 1))
-             (->> sexp
-               (-drop 2)
-               (-map 'shx--compile)
-               (s-join "; "))))
+      ((if)
+       (cl-assert (equal 3 (length args)) ()
+                  "Syntax error: if statement requires 3 arguments:\n\n  %s"
+                  sexp)
+       (format "if %s; then %s; else %s; fi"
+               (shx--compile (elt args 0))
+               (shx--compile (elt args 1))
+               (shx--compile (elt args 2))))
 
-    ((unless)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: unless statement requires 2 or more arguments\n\n  %s"
-                sexp)
-     (format "if %s; then; else %s; fi"
-             (shx--compile (elt sexp 1))
-             (->> sexp
-               (-drop 2)
-               (-map 'shx--compile)
-               (s-join "; "))))
+      ((when)
+       (cl-assert (<= 2 (length args)) ()
+                  "Syntax error: when statement requires 2 or more arguments\n\n  %s"
+                  sexp)
+       (format "if %s; then %s; fi"
+               (shx--compile (car args))
+               (s-join "; " (-map 'shx--compile (cdr args)))))
 
-    ((progn)
-     (cl-assert (< 1 (length sexp)) ()
-                "Syntax error: progn requires 1 or more arguments\n\n  %s"
-                sexp)
-     (->> sexp
-       (-drop 1)
-       (-map 'shx--compile)
-       (s-join "; ")
-       (s-append ";")))
+      ((unless)
+       (cl-assert (<= 2 (length args)) ()
+                  "Syntax error: unless statement requires 2 or more arguments\n\n  %s"
+                  sexp)
+       (format "if %s; then; else %s; fi"
+               (shx--compile (car args))
+               (s-join "; " (-map 'shx--compile (cdr args)))))
 
-    ;; Quoting
+      ((progn)
+       (cl-assert (<= 1 (length args)) ()
+                  "Syntax error: progn requires 1 or more arguments\n\n  %s"
+                  sexp)
+       (->> args (-map 'shx--compile) (s-join "; ") (s-append ";")))
 
-    ((quote %)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: quote requires 1 argument\n\n  %s" sexp)
-     (format "'%s'" (shx--compile (elt sexp 1))))
+      ;; Quoting
 
-    ((dquote %%)
-     (cl-assert (equal 2 (length sexp)) ()
-                "Syntax error: quote requires 1 argument\n\n  %s" sexp)
-     (format "\"%s\"" (shx--compile (elt sexp 1))))
+      ((quote %)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: quote requires 1 argument\n\n  %s" sexp)
+       (format "'%s'" (shx--compile (car args))))
 
-    ;; Shell features
+      ((dquote %%)
+       (cl-assert (equal 1 (length args)) ()
+                  "Syntax error: quote requires 1 argument\n\n  %s" sexp)
+       (format "\"%s\"" (shx--compile (car args))))
 
-    ((set!)
-     (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: set! requires 2 arguments\n\n  %s" sexp)
-     (let ((var (elt sexp 1)))
-       (cl-assert (or (symbolp var) (stringp var)) ()
-                  "Syntax error: first argument to set! must be a string or symbol\n\n  %s"
-                  sexp))
-     (format "%s=%s"
-             (elt sexp 1)
-             (shx--compile (elt sexp 2))))
+      ;; Shell features
+
+      ((set!)
+       (cl-assert (equal 2 (length args)) ()
+                  "Syntax error: set! requires 2 arguments\n\n  %s" sexp)
+       (let ((var (car args)))
+         (cl-assert (or (symbolp var) (stringp var)) ()
+                    "Syntax error: first argument to set! must be a string or symbol\n\n  %s"
+                    sexp)
+         (format "%s=%s"
+                 (car args)
+                 (shx--compile (elt args 1)))))
 
 
-    ((sub)
-     (cl-assert (< 1 (length sexp)) ()
-                "Syntax error: sub requires an argument\n\n  %s"
-                sexp)
-     (format "$(%s)" (s-join " " (cdr sexp))))
+      ((sub)
+       (cl-assert (<= 1 (length args)) ()
+                  "Syntax error: sub requires an argument\n\n  %s"
+                  sexp)
+       (format "$(%s)" (s-join " " args)))
 
-    ((->)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: -> requires 2 or more arguments\n\n  %s"
-                sexp)
-     (->> sexp
-       (-drop 1)
-       (-map 'shx--compile)
-       (s-join " | ")))
+      ((->)
+       (cl-assert (<= 2 (length args)) ()
+                  "Syntax error: -> requires 2 or more arguments\n\n  %s"
+                  sexp)
+       (s-join " | " (-map 'shx--compile args)))
 
-    ((cond)
-     (shx--compile-cond sexp))
+      ((cond)
+       (shx--compile-cond sexp))
 
-    (t
-     (cond ((symbolp (car sexp))
-            (cl-destructuring-bind (cmd &rest args) sexp
+      (t
+       (cond ((symbolp cmd)
               (format "%s %s"
                       cmd
-                      (->> args (-map 'shx--compile) (s-join " ")))))
-           (t
-            (error "Syntax error: Invalid expression\n\n  %s" sexp))))))
+                      (->> args (-map 'shx--compile) (s-join " "))))
+             (t
+              (error "Syntax error: Invalid expression\n\n  %s" sexp)))))))
 
 (defun shx--compile (sexp)
   "Compile SEXP into a shell command string."
