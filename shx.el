@@ -200,6 +200,12 @@ reporting.  CLAUSE is a list of (test &rest body)."
                 sexp)
      (format "[ -f %s ]" (shx--compile (elt sexp 1))))
 
+    ((f-nonempty?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: f-nonempty? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ -s %s ]" (shx--compile (elt sexp 1))))
+
     ;; Logic
 
     ((or)
