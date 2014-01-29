@@ -28,7 +28,7 @@
 ;;   (shx-pp
 ;;    '(progn
 ;;       (set! EXAMPLE 20)
-;;       (cond ([EXAMPLE = 20]
+;;       (cond ((= EXAMPLE 20)
 ;;              (echo "success"))
 ;;             ((f-exists? "~/Desktop/hello")
 ;;              (set! STR (sub "ls -la"))
