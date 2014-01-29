@@ -192,6 +192,14 @@ reporting.  CLAUSE is a list of (test &rest body)."
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 
+    ;; IO tests
+
+    ((f-exists?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: f-exists? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ -f %s ]" (shx--compile (elt sexp 1))))
+
     ;; Logic
 
     ((or)

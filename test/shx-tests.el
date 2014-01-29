@@ -202,6 +202,16 @@
   (should-error (shx--compile '(>= 0)))
   (should-error (shx--compile '(>= 0 1 2))))
 
+;; f-exists?
+
+(ert-deftest compiles-f-exists?-to-f-test ()
+  (should (equal "[ -f 1 ]"
+                 (shx--compile '(f-exists? 1)))))
+
+(ert-deftest error-if-not-1-arg-to-f-exists? ()
+  (should-error (shx--compile '(f-exists?)))
+  (should-error (shx--compile '(f-exists? 0 1))))
+
 ;; not
 
 (ert-deftest compiles-not-predicate ()
