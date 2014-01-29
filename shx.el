@@ -163,9 +163,9 @@
        (-map 'shx--compile)
        (s-join " && ")))
 
-    ((->>)
+    ((->)
      (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: ->> requires 2 or more arguments\n\n  %s"
+                "Syntax error: -> requires 2 or more arguments\n\n  %s"
                 sexp)
      (->> sexp
        (-drop 1)

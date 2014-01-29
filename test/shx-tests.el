@@ -78,15 +78,15 @@
 (ert-deftest error-if-not-enough-args-to-progn ()
   (should-error (shx--compile '(progn))))
 
-;; ->>
+;; ->
 
 (ert-deftest compiles-thread-as-pipe-delimited-statements ()
   (should (equal "0 | 1 | 2"
                  (shx--compile '(->> 0 1 2)))))
 
 (ert-deftest error-if-not-enough-args-to-thread ()
-  (should-error (shx--compile '(->>)))
-  (should-error (shx--compile '(->> 0))))
+  (should-error (shx--compile '(->)))
+  (should-error (shx--compile '(-> 0))))
 
 ;; or
 
