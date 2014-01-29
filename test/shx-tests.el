@@ -34,7 +34,8 @@
 ;; sub
 
 (ert-deftest compiles-sub-to-subshell ()
-  (should (equal "$(ls -la)" (shx--compile '(sub "ls" "-la")))))
+  (should (equal "$(ls -la)" (shx--compile '($ ls "-la"))))
+  (should (equal "$(ls -la)" (shx--compile '(sub ls "-la")))))
 
 ;; if
 

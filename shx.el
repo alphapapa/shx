@@ -31,7 +31,7 @@
 ;;       (cond ((= EXAMPLE 20)
 ;;              (echo "success"))
 ;;             ((f-exists? "~/Desktop/hello")
-;;              (set! STR (sub "ls -la"))
+;;              (set! STR ($ ls "-la"))
 ;;              (echo "works"))
 ;;             (t
 ;;              (echo EXAMPLE)))))
@@ -300,11 +300,11 @@ reporting.  CLAUSE is a list of (test &rest body)."
              (format "export %s=%s" var (shx--compile (elt args 1)))
            (format "export %s" var))))
 
-      ((sub)
+      ((sub $)
        (cl-assert (<= 1 (length args)) ()
                   "Syntax error: sub requires an argument\n\n  %s"
                   sexp)
-       (format "$(%s)" (s-join " " args)))
+       (format "$(%s)" (shx--compile args)))
 
       ((->)
        (cl-assert (<= 2 (length args)) ()
