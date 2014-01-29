@@ -345,18 +345,14 @@ reporting.  CLAUSE is a list of (test &rest body)."
   "Convert FORM to a shell command and execute synchronously.
 Return t or nil, depending on whether the command succeeded."
   (cl-assert form)
-  (let ((s (shx--compile form)))
-    (cl-assert s)
-    `(zerop (shell-command ,s))))
+  `(zerop (shell-command (shx--compile ',form))))
 
 ;;;###autoload
 (defmacro shx-string (form)
   "Convert FORM to a shell command and execute synchronously.
 Return the result as a string."
   (cl-assert form)
-  (let ((s (shx--compile form)))
-    (cl-assert s)
-    `(shell-command-to-string ,s)))
+  `(shell-command-to-string (shx--compile ',form)))
 
 ;;;###autoload
 (defun shx-pp-to-string (sexp)
