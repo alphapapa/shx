@@ -86,6 +86,54 @@
 (require 's)
 (require 'dash)
 
+(defun shx--compile-cond-clause (outer-cond clause)
+  "Compile a clause in a cond expression.
+These are compiled as ELIF/ELSE clauses in an IF statement.
+Should not be used for the first clause in the cond expression
+for this reason.
+
+OUTER-COND is the enclosing cond expression, used for error
+reporting.  CLAUSE is a list of (test &rest body)."
+  (cl-assert (listp clause) ()
+             "Syntax error: cond clause is not a list\n\n  %s" clause)
+  (cl-assert (car clause) ()
+             "Syntax error: empty cond clause\n\n  %s" outer-cond)
+  (cl-destructuring-bind (test &rest bod) clause
+    (let ((b (->> (cons 'progn bod)
+               shx--compile
+               (s-chop-suffix ";"))))
+      (if (-contains? '(t otherwise) test)
+          (format "else %s;" b)
+        (format "elif %s; then %s;" test b)))))
+
+(defun shx--compile-cond (sexp)
+  "Compile cond expression SEXP to an if-then-else form."
+  (cl-assert (< 1 (length sexp)) ()
+             "Syntax error: cond requires at least one clause\n\n  %s"
+             sexp)
+  (let ((clauses (cdr sexp)))
+    (cl-destructuring-bind (c &rest cs) clauses
+      (cl-assert (listp c) t
+                 "Syntax error: cond clause is not a list\n\n %s")
+      (cl-assert (car c) ()
+                 "Syntax error: empty cond clause\n\n  %s" sexp)
+
+      (cl-destructuring-bind (x &rest xs) c
+        (let ((test (shx--compile x))
+              (then (->> (cons 'progn xs)
+                      shx--compile
+                      (s-chop-suffix ";"))))
+          (if (not cs)
+              ;; One cond clause.
+              (format "if %s; then %s; fi;" test then)
+            ;; Several cond clauses.
+            (let ((elifs
+                   (->> cs
+                     (--map (shx--compile-cond-clause sexp it))
+                     (s-join " "))))
+
+              (format "if %s; then %s; %s fi;" test then elifs))))))))
+
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
   (cl-case (car sexp)
@@ -171,6 +219,9 @@
        (-drop 1)
        (-map 'shx--compile)
        (s-join " | ")))
+
+    ((cond)
+     (shx--compile-cond sexp))
 
     (t
      (error "Syntax error: Invalid expression\n\n  %s" sexp))))

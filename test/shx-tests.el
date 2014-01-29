@@ -82,7 +82,7 @@
 
 (ert-deftest compiles-thread-as-pipe-delimited-statements ()
   (should (equal "0 | 1 | 2"
-                 (shx--compile '(->> 0 1 2)))))
+                 (shx--compile '(-> 0 1 2)))))
 
 (ert-deftest error-if-not-enough-args-to-thread ()
   (should-error (shx--compile '(->)))
@@ -128,6 +128,33 @@
 (ert-deftest error-if-not-1-arg-to-not ()
   (should-error (shx--compile '(not)))
   (should-error (shx--compile '(not 0 1))))
+
+;; cond
+
+(ert-deftest compiles-cond--single-clause--to-if ()
+  (should (equal "if 0; then 1; fi;"
+                 (shx--compile '(cond (0 1))))))
+
+(ert-deftest compiles-cond--single-clause--multiple-statements--to-if ()
+  (should (equal "if 0; then 1; 2; fi;"
+                 (shx--compile '(cond (0 1 2))))))
+
+(ert-deftest compiles-cond--with-t-clause--to-if-then-else ()
+  (should (equal "if 0; then 1; else 2; fi;"
+                 (shx--compile '(cond (0 1) (t 2))))))
+
+(ert-deftest compiles-cond--with-otherwise-clause--to-if-then-else ()
+  (should (equal "if 0; then 1; else 2; fi;"
+                 (shx--compile '(cond (0 1) (otherwise 2))))))
+
+(ert-deftest error-if-not-1-arg-to-cond ()
+  (should-error (shx--compile '(cond))))
+
+(ert-deftest error-if-cond-clause-not-list ()
+  (should-error (shx--compile '(cond 0))))
+
+(ert-deftest error-if-cond-clause-is-empty ()
+  (should-error (shx--compile '(cond ()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; shx
