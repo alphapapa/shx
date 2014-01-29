@@ -138,11 +138,19 @@ reporting.  CLAUSE is a list of (test &rest body)."
   "Compile SEXP as a list."
   (cl-case (car sexp)
 
-    ((equal)
+    ((equal =)
      (cl-assert (equal 3 (length sexp)) ()
-                "Syntax error: equal predicate requires 2 arguments\n\n  %s"
+                "Syntax error: equal requires 2 arguments\n\n  %s"
                 sexp)
      (format "[ %s = %s ]"
+             (shx--compile (elt sexp 1))
+             (shx--compile (elt sexp 2))))
+
+    ((!= /=)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: /= requires 2 arguments\n\n  %s"
+                sexp)
+     (format "[ %s != %s ]"
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 

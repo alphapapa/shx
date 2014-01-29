@@ -110,7 +110,7 @@
 
 ;; equal
 
-(ert-deftest compiles-equality-predicate ()
+(ert-deftest compiles-equal-to-equality-test ()
   (should (equal "[ 0 = 1 ]"
                  (shx--compile '(equal 0 1)))))
 
@@ -118,6 +118,39 @@
   (should-error (shx--compile '(equal)))
   (should-error (shx--compile '(equal 0)))
   (should-error (shx--compile '(equal 0 1 2))))
+
+;; =
+
+(ert-deftest compiles-=-to-equality-test ()
+  (should (equal "[ 0 = 1 ]"
+                 (shx--compile '(= 0 1)))))
+
+(ert-deftest error-if-not-2-args-to-= ()
+  (should-error (shx--compile '(=)))
+  (should-error (shx--compile '(= 0)))
+  (should-error (shx--compile '(= 0 1 2))))
+
+;; /=
+
+(ert-deftest compiles-/=-to-nequality-test ()
+  (should (equal "[ 0 != 1 ]"
+                 (shx--compile '(/= 0 1)))))
+
+(ert-deftest error-if-not-2-args-to-/= ()
+  (should-error (shx--compile '(/=)))
+  (should-error (shx--compile '(/= 0)))
+  (should-error (shx--compile '(/= 0 1 2))))
+
+;; !=
+
+(ert-deftest compiles-!=-to-nequality-test ()
+  (should (equal "[ 0 != 1 ]"
+                 (shx--compile '(!= 0 1)))))
+
+(ert-deftest error-if-not-2-args-to-!= ()
+  (should-error (shx--compile '(!=)))
+  (should-error (shx--compile '(!= 0)))
+  (should-error (shx--compile '(!= 0 1 2))))
 
 ;; not
 
