@@ -202,6 +202,36 @@
   (should-error (shx--compile '(>= 0)))
   (should-error (shx--compile '(>= 0 1 2))))
 
+;; positive?
+
+(ert-deftest compiles-positive?-to-gt-0-test ()
+  (should (equal "[ 9 -gt 0 ]"
+                 (shx--compile '(positive? 9)))))
+
+(ert-deftest error-if-not-1-arg-to-positive? ()
+  (should-error (shx--compile '(positive?)))
+  (should-error (shx--compile '(positive? 0 1))))
+
+;; zero?
+
+(ert-deftest compiles-zero?-to-gt-0-test ()
+  (should (equal "[ 9 -eq 0 ]"
+                 (shx--compile '(zero? 9)))))
+
+(ert-deftest error-if-not-1-arg-to-zero? ()
+  (should-error (shx--compile '(zero?)))
+  (should-error (shx--compile '(zero? 0 1))))
+
+;; negative?
+
+(ert-deftest compiles-negative?-to-lt-0-test ()
+  (should (equal "[ 9 -lt 0 ]"
+                 (shx--compile '(negative? 9)))))
+
+(ert-deftest error-if-not-1-arg-to-negative? ()
+  (should-error (shx--compile '(negative?)))
+  (should-error (shx--compile '(negative? 0 1))))
+
 ;; dir-exists?
 
 (ert-deftest compiles-dir-exists?-to-d-test ()

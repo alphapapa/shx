@@ -192,6 +192,24 @@ reporting.  CLAUSE is a list of (test &rest body)."
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 
+    ((positive?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: positive? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ %s -gt 0 ]" (shx--compile (elt sexp 1))))
+
+    ((zero?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: zero? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ %s -eq 0 ]" (shx--compile (elt sexp 1))))
+
+    ((negative?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: negative? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ %s -lt 0 ]" (shx--compile (elt sexp 1))))
+
     ;; IO tests
 
     ((dir-exists?)
