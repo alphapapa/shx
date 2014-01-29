@@ -364,6 +364,8 @@ reporting.  CLAUSE is a list of (test &rest body)."
     (number-to-string sexp))
    ((stringp sexp)
     sexp)
+   ((symbolp sexp)
+    (symbol-name sexp))
    (t
     (error "Syntax error: Invalid expression\n\n  %s" sexp))))
 
