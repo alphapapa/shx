@@ -27,8 +27,14 @@
 
 (require 'ert)
 
-(ert-deftest compiles-square-bracketed-strings-to-subshells ()
-  (should (equal "$(ls -la)" (shx--compile ["ls -la"]))))
+(autoload 'shx-string "shx")
+(autoload 'shx--compile "shx")
+(autoload 'shx "shx")
+
+;; sub
+
+(ert-deftest compiles-sub-to-subshell ()
+  (should (equal "$(ls -la)" (shx--compile '(sub "ls" "-la")))))
 
 ;; if
 

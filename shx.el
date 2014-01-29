@@ -28,7 +28,8 @@
 
 ;; ATOM     = SUBSHELL | STRING | SYMBOL | INT | t
 ;; LIST     = ( ATOM* )
-;; SUBSHELL = [EXPR]
+;; INFIX_LIST = [ ATOM SYMBOL ATOM* ]
+;; SUBSHELL = (sub EXPR)
 ;; EXPR     = SUBSHELL | IF | WHEN | UNLESS | AND | OR | NOT | CASE
 ;;
 ;; PATH        = STRING
@@ -137,6 +138,12 @@ reporting.  CLAUSE is a list of (test &rest body)."
 (defun shx--compile-list (sexp)
   "Compile SEXP as a list."
   (cl-case (car sexp)
+
+    ((sub)
+     (cl-assert (< 1 (length sexp)) ()
+                "Syntax error: sub requires an argument\n\n  %s"
+                sexp)
+     (format "$(%s)" (s-join " " (cdr sexp))))
 
     ((equal =)
      (cl-assert (equal 3 (length sexp)) ()
