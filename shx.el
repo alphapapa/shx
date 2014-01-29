@@ -346,11 +346,10 @@ reporting.  CLAUSE is a list of (test &rest body)."
 
     (t
      (cond ((symbolp (car sexp))
-            (->> sexp
-              (--map (if (symbolp it)
-                         (symbol-name it)
-                       (shx--compile it)))
-              (s-join " ")))
+            (cl-destructuring-bind (cmd &rest args) sexp
+              (format "%s %s"
+                      cmd
+                      (->> args (-map 'shx--compile) (s-join " ")))))
            (t
             (error "Syntax error: Invalid expression\n\n  %s" sexp))))))
 

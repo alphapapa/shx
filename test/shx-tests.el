@@ -349,6 +349,17 @@
   (should (shx--compile '(set! "a" 1)))
   (should-error (shx--compile '(set! 0 1))))
 
+;; variable references
+
+(ert-deftest plain-symbol-should-be-compiled-to-variable-reference ()
+  (should (equal "${hello}" (shx--compile 'hello))))
+
+;; calls
+
+(ert-deftest list-with-sym-compiled-to-command-call ()
+  (should (equal "echo hello world"
+                 (shx--compile '(echo "hello" "world")))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; shx
