@@ -152,6 +152,50 @@
   (should-error (shx--compile '(!= 0)))
   (should-error (shx--compile '(!= 0 1 2))))
 
+;; <
+
+(ert-deftest compiles-<-to-lt-test ()
+  (should (equal "[ 0 -lt 1 ]"
+                 (shx--compile '(< 0 1)))))
+
+(ert-deftest error-if-not-2-args-to-< ()
+  (should-error (shx--compile '(<)))
+  (should-error (shx--compile '(< 0)))
+  (should-error (shx--compile '(< 0 1 2))))
+
+;; <=
+
+(ert-deftest compiles-<=-to-le-test ()
+  (should (equal "[ 0 -le 1 ]"
+                 (shx--compile '(<= 0 1)))))
+
+(ert-deftest error-if-not-2-args-to-<= ()
+  (should-error (shx--compile '(<=)))
+  (should-error (shx--compile '(<= 0)))
+  (should-error (shx--compile '(<= 0 1 2))))
+
+;; >
+
+(ert-deftest compiles->-to-gt-test ()
+  (should (equal "[ 0 -gt 1 ]"
+                 (shx--compile '(> 0 1)))))
+
+(ert-deftest error-if-not-2-args-to-> ()
+  (should-error (shx--compile '(>)))
+  (should-error (shx--compile '(> 0)))
+  (should-error (shx--compile '(> 0 1 2))))
+
+;; >=
+
+(ert-deftest compiles->=-to-ge-test ()
+  (should (equal "[ 0 -ge 1 ]"
+                 (shx--compile '(>= 0 1)))))
+
+(ert-deftest error-if-not-2-args-to->= ()
+  (should-error (shx--compile '(>=)))
+  (should-error (shx--compile '(>= 0)))
+  (should-error (shx--compile '(>= 0 1 2))))
+
 ;; not
 
 (ert-deftest compiles-not-predicate ()

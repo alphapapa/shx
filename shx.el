@@ -154,6 +154,38 @@ reporting.  CLAUSE is a list of (test &rest body)."
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 
+    ((<)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: < requires 2 arguments\n\n  %s"
+                sexp)
+     (format "[ %s -lt %s ]"
+             (shx--compile (elt sexp 1))
+             (shx--compile (elt sexp 2))))
+
+    ((<=)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: <= requires 2 arguments\n\n  %s"
+                sexp)
+     (format "[ %s -le %s ]"
+             (shx--compile (elt sexp 1))
+             (shx--compile (elt sexp 2))))
+
+    ((>)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: > requires 2 arguments\n\n  %s"
+                sexp)
+     (format "[ %s -gt %s ]"
+             (shx--compile (elt sexp 1))
+             (shx--compile (elt sexp 2))))
+
+    ((>=)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: >= requires 2 arguments\n\n  %s"
+                sexp)
+     (format "[ %s -ge %s ]"
+             (shx--compile (elt sexp 1))
+             (shx--compile (elt sexp 2))))
+
     ((not)
      (cl-assert (equal 2 (length sexp)) ()
                 "Syntax error: not predicate requires 1 argument\n\n  %s"
