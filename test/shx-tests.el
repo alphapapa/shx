@@ -360,6 +360,16 @@
   (should (equal "echo hello world"
                  (shx--compile '(echo "hello" "world")))))
 
+;; quotes
+
+(ert-deftest quote-expanded-to-single-quoted-form ()
+  (should (equal "'hello'" (shx--compile '(quote "hello"))))
+  (should (equal "'hello'" (shx--compile '(% "hello")))))
+
+(ert-deftest dquote-expanded-to-double-quoted-form ()
+  (should (equal "\"hello\"" (shx--compile '(dquote "hello"))))
+  (should (equal "\"hello\"" (shx--compile '(%% "hello")))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; shx

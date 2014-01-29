@@ -312,6 +312,18 @@ reporting.  CLAUSE is a list of (test &rest body)."
        (s-join "; ")
        (s-append ";")))
 
+    ;; Quoting
+
+    ((quote %)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: quote requires 1 argument\n\n  %s" sexp)
+     (format "'%s'" (shx--compile (elt sexp 1))))
+
+    ((dquote %%)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: quote requires 1 argument\n\n  %s" sexp)
+     (format "\"%s\"" (shx--compile (elt sexp 1))))
+
     ;; Shell features
 
     ((set!)
