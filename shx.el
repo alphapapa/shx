@@ -22,54 +22,20 @@
 
 ;;; Commentary:
 
-;; Compiles s-expressions to shell commands, then executes them.
-
-;;; Grammar:
-
-;; ATOM     = SUBSHELL | STRING | SYMBOL | INT | t
-;; LIST     = ( ATOM* )
-;; INFIX_LIST = [ ATOM SYMBOL ATOM* ]
-;; SUBSHELL = (sub EXPR)
-;; EXPR     = SUBSHELL | IF | WHEN | UNLESS | AND | OR | NOT | CASE
+;; Compiles s-expressions to shell commands. The command below will compile the
+;; `progn' expression to a shell script and pretty-print it to a new buffer.
 ;;
-;; PATH        = STRING
-;; FILE_TEST   = (dir-exists? PATH)
-;;             | (f-exists? PATH)
-;;             | (f-nonempty? PATH)
-;;             | (f-executable? PATH)
-;;             | (f-readable? PATH)
-;;             | (f-writable? PATH)
+;;   (shx-pp
+;;    '(progn
+;;       (set! EXAMPLE 20)
+;;       (cond ([EXAMPLE = 20]
+;;              (echo "success"))
+;;             ((f-exists? "~/Desktop/hello")
+;;              (set! STR (sub "ls -la"))
+;;              (echo "works"))
+;;             (t
+;;              (echo EXAMPLE)))))
 ;;
-;; INT_TEST    = (= INT INT)
-;;             | (/= INT INT)
-;;             | (< INT INT)
-;;             | (<= INT INT)
-;;             | (> INT INT)
-;;             | (>= INT INT)
-;;             | (zero? INT)
-;;             | (positive? INT)
-;;             | (negative? INT)
-;;
-;; TEST = FILE_TEST | INT_TEST
-;; NOT  = (not EXPR)
-;; PRED = (not TEST) | TEST
-;;
-;; IF     = (if PRED EXPR EXPR)
-;; WHEN   = (when PRED EXPR)
-;; UNLESS = (unless PRED EXPR)
-;;
-;; COND_ELT       = (PRED EXPR)
-;; COND_OTHERWISE = (t EXPR) | (otherwise EXPR)
-;; COND           = (cond COND_ELT+ COND_OTHERWISE?)
-;;
-;; CASE_ELT       = (ATOM EXPR) | (LIST EXPR)
-;; CASE_OTHERWISE = (t EXPR) | (otherwise EXPR)
-;; CASE           = (case EXPR CASE_ELT+ CASE_OTHERWISE?)
-;;
-;; AND   = (and EXPR+)
-;; OR    = (or EXPR+)
-;; PROGN = (progn EXPR*)
-;; PIPE  = (->> EXPR EXPR+)
 
 ;;; Code:
 
