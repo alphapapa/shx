@@ -372,6 +372,14 @@ Return the result as a string."
                                       nil t)
           (replace-match "" nil nil nil 1)))
 
+      ;; Insert space before if statements.
+      (save-excursion
+        (while (search-forward-regexp (rx bol (* space)
+                                          (group-n 1 "if")
+                                          (+ space))
+                                      nil t)
+          (replace-match "\nif" nil nil nil 1)))
+
       ;; Join 'then' onto same line as 'if'.
       (save-excursion
         (while (search-forward-regexp (rx bol (* space) "then" (* space) eol)
