@@ -34,10 +34,11 @@
 ;;
 ;; PATH        = STRING
 ;; FILE_TEST   = (dir-exists? PATH)
-;;             | (file-exists? PATH)
-;;             | (file-executable? PATH)
-;;             | (file-readable? PATH)
-;;             | (file-writable? PATH)
+;;             | (f-exists? PATH)
+;;             | (f-nonempty? PATH)
+;;             | (f-executable? PATH)
+;;             | (f-readable? PATH)
+;;             | (f-writable? PATH)
 ;;
 ;; STRING_TEST = (s-blank? STRING)
 ;;             | (s-matches? REGEXP STRING)
@@ -139,11 +140,7 @@ reporting.  CLAUSE is a list of (test &rest body)."
   "Compile SEXP as a list."
   (cl-case (car sexp)
 
-    ((sub)
-     (cl-assert (< 1 (length sexp)) ()
-                "Syntax error: sub requires an argument\n\n  %s"
-                sexp)
-     (format "$(%s)" (s-join " " (cdr sexp))))
+    ;; Equality
 
     ((equal =)
      (cl-assert (equal 3 (length sexp)) ()
@@ -160,6 +157,8 @@ reporting.  CLAUSE is a list of (test &rest body)."
      (format "[ %s -ne %s ]"
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
+
+    ;; Relations
 
     ((<)
      (cl-assert (equal 3 (length sexp)) ()
@@ -193,11 +192,33 @@ reporting.  CLAUSE is a list of (test &rest body)."
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 
+    ;; Logic
+
+    ((or)
+     (cl-assert (< 2 (length sexp)) ()
+                "Syntax error: or requires 2 or more arguments\n\n  %s"
+                sexp)
+     (->> sexp
+       (-drop 1)
+       (-map 'shx--compile)
+       (s-join " || ")))
+
+    ((and)
+     (cl-assert (< 2 (length sexp)) ()
+                "Syntax error: and requires 2 or more arguments\n\n  %s"
+                sexp)
+     (->> sexp
+       (-drop 1)
+       (-map 'shx--compile)
+       (s-join " && ")))
+
     ((not)
      (cl-assert (equal 2 (length sexp)) ()
                 "Syntax error: not predicate requires 1 argument\n\n  %s"
                 sexp)
      (format "[ ! %s ]" (shx--compile (elt sexp 1))))
+
+    ;; Control structures
 
     ((if)
      (cl-assert (equal 4 (length sexp)) ()
@@ -240,23 +261,13 @@ reporting.  CLAUSE is a list of (test &rest body)."
        (s-join "; ")
        (s-append ";")))
 
-    ((or)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: or requires 2 or more arguments\n\n  %s"
-                sexp)
-     (->> sexp
-       (-drop 1)
-       (-map 'shx--compile)
-       (s-join " || ")))
+    ;; Shell features
 
-    ((and)
-     (cl-assert (< 2 (length sexp)) ()
-                "Syntax error: and requires 2 or more arguments\n\n  %s"
+    ((sub)
+     (cl-assert (< 1 (length sexp)) ()
+                "Syntax error: sub requires an argument\n\n  %s"
                 sexp)
-     (->> sexp
-       (-drop 1)
-       (-map 'shx--compile)
-       (s-join " && ")))
+     (format "$(%s)" (s-join " " (cdr sexp))))
 
     ((->)
      (cl-assert (< 2 (length sexp)) ()
