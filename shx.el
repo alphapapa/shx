@@ -95,13 +95,13 @@ reporting.  CLAUSE is a list of (test &rest body)."
              "Syntax error: cond clause is not a list\n\n  %s" clause)
   (cl-assert (car clause) ()
              "Syntax error: empty cond clause\n\n  %s" outer-cond)
-  (cl-destructuring-bind (test &rest bod) clause
-    (let ((b (->> (cons 'progn bod)
-               shx--compile
-               (s-chop-suffix ";"))))
-      (if (-contains? '(t otherwise) test)
-          (format "else %s;" b)
-        (format "elif %s; then %s;" test b)))))
+  (let ((test (car clause))
+        (body (->> (cons 'progn (cdr clause))
+                shx--compile
+                (s-chop-suffix ";"))))
+    (if (-contains? '(t otherwise) test)
+        (format "else %s;" body)
+      (format "elif %s; then %s;" (shx--compile test) body))))
 
 (defun shx--compile-cond (sexp)
   "Compile cond expression SEXP to an if-then-else form."
@@ -397,7 +397,6 @@ Return the result as a string."
   "Compile SEXP and pretty-print as a string."
   (let ((s (->> (shx--compile sexp)
              (s-replace-all `((";" . ";\n")
-                              ("if" . "\nif")
                               ("then " . "then\n  ")
                               ("else " . "else\n  "))))))
     (with-temp-buffer
