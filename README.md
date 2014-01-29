@@ -12,30 +12,65 @@ implemented in Emacs Lisp.
 Here's a chunk of SHX:
 
 ```lisp
-(set! EXAMPLE 20)
+;; Setting and exporting variables
+(set!    X 20)
+(export! Y 21)
 
-(cond ((= EXAMPLE 20)
-       (echo "success"))
-      ((f-exists? "~/Desktop/hello")
-       (set! STR ($ ls "-la"))
-       (echo "works"))
-      (t
-       (echo EXAMPLE)))
+;; Infix operators
+
+[X < Y] ; Is equivalent to:
+(< X Y)
+
+;; Flow control
+
+(if [X < Y]
+    (echo "math works")
+  (echo "lolwut"))
+
+(cond ((zero? X) (echo "X is 0"))
+      ([X = 20]  (echo "X is 20"))
+      ([X = 21]  (echo "X is 21"))
+      (otherwise (echo X)))
+
+;; Pipes
+
+(-> "ps -ef" "grep -i emacs" "xargs echo")
+
+;; Boolean logic
+
+(and (dir-exists? "~/Desktop")
+     (f-writable? "~/Desktop")
+     (not (f-exists? "~/Deskop.lock")))
 ```
 
 Here's the shell script it will compile to:
 
 ```sh
-EXAMPLE=20
+X=20
+export Y=21
 
-if [ ${EXAMPLE} -eq 20 ]; then
-    echo success
-elif [ -f ~/Desktop/hello ]; then
-    STR=$(ls -la)
-    echo works
+[ ${X} -lt ${Y} ];
+[ ${X} -lt ${Y} ];
+
+if [ ${X} -lt ${Y} ]; then
+    echo math works
 else
-    echo ${EXAMPLE}
+    echo lolwut
 fi
+
+if [ ${X} -eq 0 ]; then
+    echo X is 0
+elif [ ${X} -eq 20 ]; then
+    echo X is 20
+elif [ ${X} -eq 21 ]; then
+    echo X is 21
+else
+    echo ${X}
+fi
+
+ps -ef | grep -i emacs | xargs echo
+
+[ -d ~/Desktop ] && [ -w ~/Desktop ] && [ ! -f ~/Deskop.lock ];
 ```
 
 ## Installing
