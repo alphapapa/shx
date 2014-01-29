@@ -40,11 +40,6 @@
 ;;             | (f-readable? PATH)
 ;;             | (f-writable? PATH)
 ;;
-;; STRING_TEST = (s-blank? STRING)
-;;             | (s-matches? REGEXP STRING)
-;;             | (s-set? STRING)
-;;             | (s-numeric? STRING)
-;;
 ;; INT_TEST    = (= INT INT)
 ;;             | (/= INT INT)
 ;;             | (< INT INT)
@@ -55,7 +50,7 @@
 ;;             | (positive? INT)
 ;;             | (negative? INT)
 ;;
-;; TEST = FILE_TEST | STRING_TEST | INT_TEST
+;; TEST = FILE_TEST | INT_TEST
 ;; NOT  = (not EXPR)
 ;; PRED = (not TEST) | TEST
 ;;
@@ -350,7 +345,14 @@ reporting.  CLAUSE is a list of (test &rest body)."
      (shx--compile-cond sexp))
 
     (t
-     (error "Syntax error: Invalid expression\n\n  %s" sexp))))
+     (cond ((symbolp (car sexp))
+            (->> sexp
+              (--map (if (symbolp it)
+                         (symbol-name it)
+                       (shx--compile it)))
+              (s-join " ")))
+           (t
+            (error "Syntax error: Invalid expression\n\n  %s" sexp))))))
 
 (defun shx--compile (sexp)
   "Compile SEXP into a shell command string."
@@ -365,7 +367,7 @@ reporting.  CLAUSE is a list of (test &rest body)."
    ((stringp sexp)
     sexp)
    ((symbolp sexp)
-    (symbol-name sexp))
+    (format "${%s}" sexp))
    (t
     (error "Syntax error: Invalid expression\n\n  %s" sexp))))
 
