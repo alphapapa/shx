@@ -249,6 +249,7 @@ reporting.  CLAUSE is a list of (test &rest body)."
    (t
     (error "Syntax error: Invalid expression\n\n  %s" sexp))))
 
+;;;###autoload
 (defmacro shx (form)
   "Convert FORM to a shell command and execute synchronously.
 Return t or nil, depending on whether the command succeeded."
@@ -257,6 +258,7 @@ Return t or nil, depending on whether the command succeeded."
   `(let ((code (shell-command (shx--compile ',form))))
      (zerop code)))
 
+;;;###autoload
 (defmacro shx-string (form)
   "Convert FORM to a shell command and execute synchronously.
 Return the result as a string."
@@ -264,9 +266,14 @@ Return the result as a string."
   (cl-assert (shx--compile form))
   `(shell-command-to-string (shx--compile ',form)))
 
+;;;###autoload
 (defun shx-pp-to-string (sexp)
   "Compile SEXP and pretty-print as a string."
-  (let ((s (->> (shx--compile sexp) (s-replace "; " ";\n"))))
+  (let ((s (->> (shx--compile sexp)
+             (s-replace-all `((";" . ";\n")
+                              ("if" . "\nif")
+                              ("then " . "then\n  ")
+                              ("else " . "else\n  "))))))
     (with-temp-buffer
       (insert s)
       (shell-script-mode)
@@ -277,10 +284,11 @@ Return the result as a string."
         (forward-line))
       (buffer-string))))
 
+;;;###autoload
 (defun shx-pp (sexp)
   "Compile SEXP and pretty-print to a new buffer."
   (interactive "xExpression: ")
-  (let ((s (shx-compile-pp-to-string sexp))
+  (let ((s (shx-pp-to-string sexp))
         (buf (get-buffer-create "*shx pp output*")))
     (with-current-buffer buf
       (shell-script-mode)
