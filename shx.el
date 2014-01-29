@@ -319,6 +319,18 @@ reporting.  CLAUSE is a list of (test &rest body)."
 
     ;; Shell features
 
+    ((set!)
+     (cl-assert (equal 3 (length sexp)) ()
+                "Syntax error: set! requires 2 arguments\n\n  %s" sexp)
+     (let ((var (elt sexp 1)))
+       (cl-assert (or (symbolp var) (stringp var)) ()
+                  "Syntax error: first argument to set! must be a string or symbol\n\n  %s"
+                  sexp))
+     (format "%s=%s"
+             (elt sexp 1)
+             (shx--compile (elt sexp 2))))
+
+
     ((sub)
      (cl-assert (< 1 (length sexp)) ()
                 "Syntax error: sub requires an argument\n\n  %s"

@@ -334,6 +334,21 @@
 (ert-deftest square-bracket-parsed-as-infix-exprs ()
   (should (equal "[ 1 -eq 2 ]" (shx--compile [1 = 2]))))
 
+;; set!
+
+(ert-deftest compiles-set!-to-var-assignment ()
+  (should (equal "a=2" (shx--compile '(set! a 2)))))
+
+(ert-deftest error-if-not-2-args-to-set! ()
+  (should-error (shx--compile '(set!)))
+  (should-error (shx--compile '(set! a)))
+  (should-error (shx--compile '(set! a 1 2))))
+
+(ert-deftest error-if-first-arg-to-set!-not-a-string-or-symbol ()
+  (should (shx--compile '(set! a 1)))
+  (should (shx--compile '(set! "a" 1)))
+  (should-error (shx--compile '(set! 0 1))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; shx
