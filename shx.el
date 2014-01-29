@@ -229,7 +229,7 @@ reporting.  CLAUSE is a list of (test &rest body)."
        (cl-assert (equal 1 (length args)) ()
                   "Syntax error: not predicate requires 1 argument\n\n  %s"
                   sexp)
-       (format "[ ! %s ]" (shx--compile (car args))))
+       (s-replace "[" "[ !" (shx--compile (car args))))
 
       ;; Control structures
 

@@ -282,8 +282,8 @@
 ;; not
 
 (ert-deftest compiles-not-predicate ()
-  (should (equal "[ ! 0 ]"
-                 (shx--compile '(not 0)))))
+  (should (equal "[ ! 1 -eq 2 ]"
+                 (shx--compile '(not (= 1 2))))))
 
 (ert-deftest error-if-not-1-arg-to-not ()
   (should-error (shx--compile '(not)))
