@@ -212,6 +212,24 @@ reporting.  CLAUSE is a list of (test &rest body)."
                 sexp)
      (format "[ -s %s ]" (shx--compile (elt sexp 1))))
 
+    ((f-writable?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: f-writable? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ -w %s ]" (shx--compile (elt sexp 1))))
+
+    ((f-readable?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: f-readable? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ -r %s ]" (shx--compile (elt sexp 1))))
+
+    ((f-executable?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: f-executable? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ -x %s ]" (shx--compile (elt sexp 1))))
+
     ;; Logic
 
     ((or)

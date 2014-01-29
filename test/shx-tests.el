@@ -232,6 +232,36 @@
   (should-error (shx--compile '(f-nonempty?)))
   (should-error (shx--compile '(f-nonempty? 0 1))))
 
+;; f-readable?
+
+(ert-deftest compiles-f-readable?-to-f-test ()
+  (should (equal "[ -r 1 ]"
+                 (shx--compile '(f-readable? 1)))))
+
+(ert-deftest error-if-not-1-arg-to-f-readable? ()
+  (should-error (shx--compile '(f-readable?)))
+  (should-error (shx--compile '(f-readable? 0 1))))
+
+;; f-writable?
+
+(ert-deftest compiles-f-writable?-to-f-test ()
+  (should (equal "[ -w 1 ]"
+                 (shx--compile '(f-writable? 1)))))
+
+(ert-deftest error-if-not-1-arg-to-f-writable? ()
+  (should-error (shx--compile '(f-writable?)))
+  (should-error (shx--compile '(f-writable? 0 1))))
+
+;; f-executable?
+
+(ert-deftest compiles-f-executable?-to-f-test ()
+  (should (equal "[ -x 1 ]"
+                 (shx--compile '(f-executable? 1)))))
+
+(ert-deftest error-if-not-1-arg-to-f-executable? ()
+  (should-error (shx--compile '(f-executable?)))
+  (should-error (shx--compile '(f-executable? 0 1))))
+
 ;; not
 
 (ert-deftest compiles-not-predicate ()
