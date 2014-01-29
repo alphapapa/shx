@@ -202,6 +202,16 @@
   (should-error (shx--compile '(>= 0)))
   (should-error (shx--compile '(>= 0 1 2))))
 
+;; dir-exists?
+
+(ert-deftest compiles-dir-exists?-to-d-test ()
+  (should (equal "[ -d 1 ]"
+                 (shx--compile '(dir-exists? 1)))))
+
+(ert-deftest error-if-not-1-arg-to-dir-exists? ()
+  (should-error (shx--compile '(dir-exists?)))
+  (should-error (shx--compile '(dir-exists? 0 1))))
+
 ;; f-exists?
 
 (ert-deftest compiles-f-exists?-to-f-test ()

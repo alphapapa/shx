@@ -194,6 +194,12 @@ reporting.  CLAUSE is a list of (test &rest body)."
 
     ;; IO tests
 
+    ((dir-exists?)
+     (cl-assert (equal 2 (length sexp)) ()
+                "Syntax error: dir-exists? requires 1 argument\n\n  %s"
+                sexp)
+     (format "[ -d %s ]" (shx--compile (elt sexp 1))))
+
     ((f-exists?)
      (cl-assert (equal 2 (length sexp)) ()
                 "Syntax error: f-exists? requires 1 argument\n\n  %s"
