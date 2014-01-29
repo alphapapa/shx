@@ -142,7 +142,7 @@ reporting.  CLAUSE is a list of (test &rest body)."
      (cl-assert (equal 3 (length sexp)) ()
                 "Syntax error: equal requires 2 arguments\n\n  %s"
                 sexp)
-     (format "[ %s = %s ]"
+     (format "[ %s -eq %s ]"
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 
@@ -150,7 +150,7 @@ reporting.  CLAUSE is a list of (test &rest body)."
      (cl-assert (equal 3 (length sexp)) ()
                 "Syntax error: /= requires 2 arguments\n\n  %s"
                 sexp)
-     (format "[ %s != %s ]"
+     (format "[ %s -ne %s ]"
              (shx--compile (elt sexp 1))
              (shx--compile (elt sexp 2))))
 

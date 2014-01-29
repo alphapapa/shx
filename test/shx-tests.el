@@ -111,7 +111,7 @@
 ;; equal
 
 (ert-deftest compiles-equal-to-equality-test ()
-  (should (equal "[ 0 = 1 ]"
+  (should (equal "[ 0 -eq 1 ]"
                  (shx--compile '(equal 0 1)))))
 
 (ert-deftest error-if-not-2-args-to-equal ()
@@ -122,7 +122,7 @@
 ;; =
 
 (ert-deftest compiles-=-to-equality-test ()
-  (should (equal "[ 0 = 1 ]"
+  (should (equal "[ 0 -eq 1 ]"
                  (shx--compile '(= 0 1)))))
 
 (ert-deftest error-if-not-2-args-to-= ()
@@ -133,7 +133,7 @@
 ;; /=
 
 (ert-deftest compiles-/=-to-nequality-test ()
-  (should (equal "[ 0 != 1 ]"
+  (should (equal "[ 0 -ne 1 ]"
                  (shx--compile '(/= 0 1)))))
 
 (ert-deftest error-if-not-2-args-to-/= ()
@@ -144,7 +144,7 @@
 ;; !=
 
 (ert-deftest compiles-!=-to-nequality-test ()
-  (should (equal "[ 0 != 1 ]"
+  (should (equal "[ 0 -ne 1 ]"
                  (shx--compile '(!= 0 1)))))
 
 (ert-deftest error-if-not-2-args-to-!= ()
