@@ -401,10 +401,26 @@ Return the result as a string."
       (insert s)
       (shell-script-mode)
       (goto-char (point-min))
-      (while (not (eobp))
-        (goto-char (line-beginning-position))
-        (indent-for-tab-command)
-        (forward-line))
+
+      ;; Remove unneeded semicolons.
+      (save-excursion
+        (while (search-forward-regexp (rx (not (any "]")) (group ";") eol)
+                                      nil t)
+          (replace-match "" nil nil nil 1)))
+
+      ;; Join 'then' onto same line as 'if'.
+      (save-excursion
+        (while (search-forward-regexp (rx bol (* space) "then" (* space) eol)
+                                      nil t)
+          (join-line)))
+
+      ;; Indent buffer.
+      (save-excursion
+        (while (not (eobp))
+          (goto-char (line-beginning-position))
+          (indent-for-tab-command)
+          (forward-line)))
+
       (buffer-string))))
 
 ;;;###autoload
