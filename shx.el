@@ -277,8 +277,8 @@ reporting.  CLAUSE is a list of (test &rest body)."
   "Compile SEXP into a shell command string."
   (cond
    ((vectorp sexp)
-    (let ((cmd (elt sexp 0)))
-      (format "$(%s)" (shx--compile cmd))))
+    (cl-destructuring-bind (fst op &rest rest) (mapcar 'identity sexp)
+      (shx--compile (cl-list* op fst rest))))
    ((listp sexp)
     (shx--compile-list sexp))
    ((integerp sexp)

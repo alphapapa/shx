@@ -239,7 +239,13 @@
 (ert-deftest error-if-cond-clause-is-empty ()
   (should-error (shx--compile '(cond ()))))
 
+;; infix expressions
+
+(ert-deftest square-bracket-parsed-as-infix-exprs ()
+  (should (equal "[ 1 -eq 2 ]" (shx--compile [1 = 2]))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; shx
 
 (ert-deftest shx-executes-synchronously ()
