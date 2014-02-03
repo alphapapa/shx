@@ -7,7 +7,6 @@ implemented in Emacs Lisp.
 
 - Shell features: pipes, variables, quoting
 - Flow control constructs: `if`, `unless`, `when`, `cond`
-- Shell features: pipes, variables, quoting
 
 Here's a chunk of SHX:
 
